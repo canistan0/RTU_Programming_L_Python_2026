@@ -57,30 +57,72 @@ Examples (these are also used to check your work):
 
 def count_characters(text: str) -> int:
     """Count characters that are not whitespace."""
-    # TODO: implement
-    raise NotImplementedError("count_characters() is not implemented yet")
+    count = 0
+    for character in text:
+        # Spaces, tabs, and newlines are not counted.
+        if not character.isspace():
+            count += 1
+    return count
 
 
 def count_words(text: str) -> int:
-    """Count number of whitespace-separated words."""
-    # TODO: implement
-    raise NotImplementedError("count_words() is not implemented yet")
+    """Count words separated by whitespace."""
+    return len(text.split())
 
 
 def extract_numbers(text: str) -> list[int]:
-    """Return a list of the integers found in text, in order."""
-    # TODO: implement
-    raise NotImplementedError("extract_numbers() is not implemented yet")
+    """Return integers found in the text, in their original order."""
+    numbers = []
+
+    for word in text.split():
+        # The task allows punctuation at the end of a number.
+        word = word.rstrip(".,!?;:")
+
+        if word.startswith("-"):
+            digits = word[1:]
+        else:
+            digits = word
+
+        # A minus sign alone is not a number.
+        # Decimal points and letters also fail this check.
+        if digits.isdigit():
+            try:
+                numbers.append(int(word))
+            except ValueError:
+                # Some Unicode digit characters cannot be read by int.
+                continue
+
+    return numbers
 
 
 def analyze_text(text: str) -> dict:
-    """Return a dict with characters, words, numbers, sum and average."""
-    # TODO: call the helper functions and compute sum and average
-    raise NotImplementedError("analyze_text() is not implemented yet")
+    """Return character, word, and number information."""
+    characters = count_characters(text)
+    words = count_words(text)
+    numbers = extract_numbers(text)
+    total = sum(numbers)
+
+    # This avoids division by zero when no numbers are found.
+    if len(numbers) > 0:
+        average = total / len(numbers)
+    else:
+        average = 0.0
+
+    return {
+        "characters": characters,
+        "words": words,
+        "numbers": numbers,
+        "sum": total,
+        "average": average,
+    }
 
 
 if __name__ == "__main__":
-    # Keep all input() calls inside this block, otherwise the autograder
-    # cannot import your file.
-    # TODO: read input, call analyze_text(), and print results
-    pass
+    text = input("Enter text: ")
+    result = analyze_text(text)
+
+    print(f"Characters (no spaces): {result['characters']}")
+    print(f"Words: {result['words']}")
+    print(f"Numbers: {result['numbers']}")
+    print(f"Sum: {result['sum']}")
+    print(f"Average: {result['average']:.2f}")
